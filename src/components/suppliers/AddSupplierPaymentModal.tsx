@@ -1,24 +1,25 @@
 import React, { useState } from 'react';
-import { useSupplier } from '../../contexts/SupplierContext';
+import { useSupplier, SupplierPayment } from '../../contexts/SupplierContext';
 import Modal from '../common/Modal';
 
-interface AddSupplierPaymentModalProps {
+interface EditSupplierPaymentModalProps {
   isOpen: boolean;
   onClose: () => void;
+  payment: SupplierPayment;
 }
 
-export default function AddSupplierPaymentModal({ isOpen, onClose }: AddSupplierPaymentModalProps) {
-  const { suppliers, addSupplierPayment, getSupplierById, getSupplierStats } = useSupplier();
+export default function EditSupplierPaymentModal({ isOpen, onClose, payment }: EditSupplierPaymentModalProps) {
+  const { suppliers, updateSupplierPayment, getSupplierById } = useSupplier();
   const [formData, setFormData] = useState({
-    supplierId: '',
-    amount: 0,
-    paymentMethod: 'virement' as const,
-    paymentDate: new Date().toISOString().split('T')[0],
-    reference: '',
-    description: ''
+    supplierId: payment.supplierId,
+    amount: payment.amount,
+    paymentMethod: payment.paymentMethod,
+    paymentDate: payment.paymentDate,
+    reference: payment.reference,
+    description: payment.description || ''
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!formData.supplierId || formData.amount <= 0) {
@@ -32,7 +33,7 @@ export default function AddSupplierPaymentModal({ isOpen, onClose }: AddSupplier
       return;
     }
     
-    addSupplierPayment({
+    await updateSupplierPayment(payment.id, {
       supplierId: formData.supplierId,
       supplier,
       amount: formData.amount,
@@ -42,14 +43,6 @@ export default function AddSupplierPaymentModal({ isOpen, onClose }: AddSupplier
       description: formData.description
     });
     
-    setFormData({
-      supplierId: '',
-      amount: 0,
-      paymentMethod: 'virement',
-      paymentDate: new Date().toISOString().split('T')[0],
-      reference: '',
-      description: ''
-    });
     onClose();
   };
 
@@ -61,13 +54,11 @@ export default function AddSupplierPaymentModal({ isOpen, onClose }: AddSupplier
     });
   };
 
-  const selectedSupplierStats = formData.supplierId ? getSupplierStats(formData.supplierId) : null;
-
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Nouveau Paiement Fournisseur" size="md">
+    <Modal isOpen={isOpen} onClose={onClose} title="Modifier Paiement Fournisseur" size="md">
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 transition-colors duration-300">
             Fournisseur *
           </label>
           <select
@@ -78,41 +69,17 @@ export default function AddSupplierPaymentModal({ isOpen, onClose }: AddSupplier
             className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 transition-colors duration-300"
           >
             <option value="">Sélectionner un fournisseur</option>
-            {suppliers.map(supplier => {
-              const stats = getSupplierStats(supplier.id);
-              return (
-                <option key={supplier.id} value={supplier.id}>
-                  {supplier.name} - Balance: {stats.balance.toLocaleString()} MAD
-                </option>
-              );
-            })}
+            {suppliers.map(supplier => (
+              <option key={supplier.id} value={supplier.id}>
+                {supplier.name}
+              </option>
+            ))}
           </select>
         </div>
-
-        {selectedSupplierStats && (
-          <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 rounded-lg p-4 transition-colors duration-300">
-            <h4 className="font-medium text-blue-900 dark:text-blue-100 mb-2">Informations Fournisseur</h4>
-            <div className="grid grid-cols-2 gap-4 text-sm text-blue-800 dark:text-blue-200">
-              <div>
-                <p>Total achats: {selectedSupplierStats.totalPurchases.toLocaleString()} MAD</p>
-                <p>Total paiements: {selectedSupplierStats.totalPayments.toLocaleString()} MAD</p>
-              </div>
-              <div>
-                <p className={`font-bold ${
-                  selectedSupplierStats.balance > 0 ? 'text-red-600' : 
-                  selectedSupplierStats.balance < 0 ? 'text-green-600' : 'text-gray-600'
-                }`}>
-                  Balance: {selectedSupplierStats.balance.toLocaleString()} MAD
-                </p>
-                <p>{selectedSupplierStats.ordersCount} commande{selectedSupplierStats.ordersCount > 1 ? 's' : ''}</p>
-              </div>
-            </div>
-          </div>
-        )}
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 transition-colors duration-300">
               Montant (MAD) *
             </label>
             <input
@@ -129,7 +96,7 @@ export default function AddSupplierPaymentModal({ isOpen, onClose }: AddSupplier
           </div>
           
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 transition-colors duration-300">
               Mode de paiement
             </label>
             <select
@@ -148,7 +115,7 @@ export default function AddSupplierPaymentModal({ isOpen, onClose }: AddSupplier
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 transition-colors duration-300">
               Date de paiement
             </label>
             <input
@@ -161,7 +128,7 @@ export default function AddSupplierPaymentModal({ isOpen, onClose }: AddSupplier
           </div>
           
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 transition-colors duration-300">
               Référence
             </label>
             <input
@@ -176,7 +143,7 @@ export default function AddSupplierPaymentModal({ isOpen, onClose }: AddSupplier
         </div>
         
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 transition-colors duration-300">
             Description (optionnel)
           </label>
           <textarea
@@ -201,7 +168,7 @@ export default function AddSupplierPaymentModal({ isOpen, onClose }: AddSupplier
             type="submit"
             className="px-4 py-2 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white rounded-lg transition-all duration-200"
           >
-            Enregistrer Paiement
+            Modifier Paiement
           </button>
         </div>
       </form>
