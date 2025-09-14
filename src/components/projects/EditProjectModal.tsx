@@ -24,7 +24,7 @@ export default function EditProjectModal({ isOpen, onClose, project }: EditProje
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!formData.name || !formData.clientId) {
       alert('Le nom du projet et le client sont obligatoires');
       return;
@@ -40,7 +40,7 @@ export default function EditProjectModal({ isOpen, onClose, project }: EditProje
       alert('Client non trouvé');
       return;
     }
-    
+
     await updateProject(project.id, {
       name: formData.name,
       description: formData.description,
@@ -53,11 +53,13 @@ export default function EditProjectModal({ isOpen, onClose, project }: EditProje
       status: formData.status,
       progress: formData.progress
     });
-    
+
     onClose();
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+  ) => {
     const { name, value, type } = e.target;
     setFormData({
       ...formData,
@@ -69,8 +71,9 @@ export default function EditProjectModal({ isOpen, onClose, project }: EditProje
     <Modal isOpen={isOpen} onClose={onClose} title="Modifier Projet" size="lg">
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Nom du projet */}
           <div className="md:col-span-2">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 transition-colors duration-300">
               Nom du projet *
             </label>
             <input
@@ -79,12 +82,13 @@ export default function EditProjectModal({ isOpen, onClose, project }: EditProje
               value={formData.name}
               onChange={handleChange}
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 transition-colors duration-300"
             />
           </div>
-          
+
+          {/* Description */}
           <div className="md:col-span-2">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 transition-colors duration-300">
               Description
             </label>
             <textarea
@@ -92,12 +96,13 @@ export default function EditProjectModal({ isOpen, onClose, project }: EditProje
               value={formData.description}
               onChange={handleChange}
               rows={3}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 transition-colors duration-300"
             />
           </div>
-          
+
+          {/* Client */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 transition-colors duration-300">
               Client *
             </label>
             <select
@@ -105,7 +110,7 @@ export default function EditProjectModal({ isOpen, onClose, project }: EditProje
               value={formData.clientId}
               onChange={handleChange}
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 transition-colors duration-300"
             >
               <option value="">Sélectionner un client</option>
               {clients.map(client => (
@@ -115,9 +120,10 @@ export default function EditProjectModal({ isOpen, onClose, project }: EditProje
               ))}
             </select>
           </div>
-          
+
+          {/* Budget */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 transition-colors duration-300">
               Budget (MAD)
             </label>
             <input
@@ -127,12 +133,13 @@ export default function EditProjectModal({ isOpen, onClose, project }: EditProje
               onChange={handleChange}
               min="0"
               step="0.01"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 transition-colors duration-300"
             />
           </div>
-          
+
+          {/* Dates */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 transition-colors duration-300">
               Date de début
             </label>
             <input
@@ -140,12 +147,12 @@ export default function EditProjectModal({ isOpen, onClose, project }: EditProje
               name="startDate"
               value={formData.startDate}
               onChange={handleChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 transition-colors duration-300"
             />
           </div>
-          
+
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 transition-colors duration-300">
               Date de fin
             </label>
             <input
@@ -153,35 +160,37 @@ export default function EditProjectModal({ isOpen, onClose, project }: EditProje
               name="endDate"
               value={formData.endDate}
               onChange={handleChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 transition-colors duration-300"
             />
           </div>
-          
+
+          {/* Priorité */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 transition-colors duration-300">
               Priorité
             </label>
             <select
               name="priority"
               value={formData.priority}
               onChange={handleChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 transition-colors duration-300"
             >
               <option value="low">🟢 Basse</option>
               <option value="medium">🟡 Moyenne</option>
               <option value="high">🔴 Haute</option>
             </select>
           </div>
-          
+
+          {/* Statut */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 transition-colors duration-300">
               Statut
             </label>
             <select
               name="status"
               value={formData.status}
               onChange={handleChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 transition-colors duration-300"
             >
               <option value="pending">En attente</option>
               <option value="in_progress">En cours</option>
@@ -189,9 +198,10 @@ export default function EditProjectModal({ isOpen, onClose, project }: EditProje
               <option value="overdue">En retard</option>
             </select>
           </div>
-          
+
+          {/* Progression */}
           <div className="md:col-span-2">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 transition-colors duration-300">
               Progression (%)
             </label>
             <div className="flex items-center space-x-4">
@@ -204,26 +214,33 @@ export default function EditProjectModal({ isOpen, onClose, project }: EditProje
                 max="100"
                 className="flex-1"
               />
-              <span className="text-sm font-medium text-gray-900 w-12">{formData.progress}%</span>
+              <span className="text-sm text-gray-700 dark:text-gray-300 transition-colors duration-300">
+                {formData.progress}%
+              </span>
             </div>
-            <div className="mt-2 w-full bg-gray-200 rounded-full h-2">
-              <div 
+            <div className="mt-2 w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2 transition-colors duration-300">
+              <div
                 className={`h-2 rounded-full transition-all duration-300 ${
-                  formData.progress >= 80 ? 'bg-green-500' :
-                  formData.progress >= 50 ? 'bg-blue-500' :
-                  formData.progress >= 25 ? 'bg-yellow-500' : 'bg-red-500'
+                  formData.progress >= 80
+                    ? 'bg-green-500'
+                    : formData.progress >= 50
+                    ? 'bg-blue-500'
+                    : formData.progress >= 25
+                    ? 'bg-yellow-500'
+                    : 'bg-red-500'
                 }`}
                 style={{ width: `${formData.progress}%` }}
-              />
+              ></div>
             </div>
           </div>
         </div>
 
+        {/* Boutons */}
         <div className="flex justify-end space-x-3 pt-6">
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+            className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
           >
             Annuler
           </button>
